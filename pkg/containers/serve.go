@@ -28,6 +28,11 @@ func Serve(e *echo.Echo) {
 	controllers.SetCategoryService(categoryService)
 	routes.CategoryRoutes(e)
 
+	subCategoryRepo := repositories.SubCategoryDBInstance(db)
+	subCategoryService := service.SubCategoryServiceInstance(subCategoryRepo)
+	controllers.SetSubCategoryService(subCategoryService)
+	routes.SubCategoryRoutes(e)
+
 	log.Fatal(e.Start(fmt.Sprintf(":%s", config.LocalConfig.Port)))
 
 }
