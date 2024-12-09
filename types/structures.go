@@ -23,6 +23,19 @@ type SubCategoryRequest struct {
 	CategoryId uint   `json:"categoryId"`
 }
 
+type ProductRequest struct {
+	ID            uint    `json:"id"`
+	Name          string  `json:"name"`
+	Description   string  `json:"description,omitempty"`
+	CategoryId    uint    `json:"categoryId"`
+	SubCategoryId uint    `json:"subCategoryId"`
+	Icon          string  `json:"icon"`
+	Price         float64 `json:"price"`
+	Quantity      string  `json:"quantity"`
+	Discount      uint16  `json:"discount"`
+	Status        string  `json:"status"`
+}
+
 func (book BookRequest) Validate() error {
 	return validation.ValidateStruct(&book,
 		validation.Field(&book.BookName,
@@ -52,4 +65,29 @@ func (subCategory SubCategoryRequest) ValidateSubCategory() error {
 		validation.Field(&subCategory.CategoryId,
 			validation.Required.Error("CategoryId cannot be empty")),
 	)
+}
+
+func (product ProductRequest) ValidateProduct() error {
+	return validation.ValidateStruct(&product,
+		validation.Field(&product.Name,
+			validation.Required.Error("Product name cannot be empty"),
+			validation.Length(1, 50)),
+		validation.Field(&product.Description,
+			validation.Length(0, 255)),
+		validation.Field(&product.CategoryId,
+			validation.Required.Error("CategoryId cannot be empty")),
+		validation.Field(&product.SubCategoryId,
+			validation.Required.Error("SubCategoryId cannot be empty")),
+		validation.Field(&product.Icon,
+			validation.Required.Error("Icon cannot be empty")),
+		validation.Field(&product.Price,
+			validation.Required.Error("Price cannot be empty"),
+			validation.Min(0.01).Error("Price must be greater than or equal to 0.01")),
+		validation.Field(&product.Quantity,
+			validation.Required.Error("Quantity cannot be empty")),
+		validation.Field(&product.Discount,
+			validation.Required.Error("Discount cannot be empty")),
+		validation.Field(&product.Status,
+			validation.Required.Error("Status cannot be empty"),
+			validation.In("in-stock", "stock-out").Error("Status must be either 'in-stock' or 'stock-out'")))
 }

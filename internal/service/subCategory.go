@@ -5,6 +5,8 @@ import (
 	"toritorkari-bazar/internal/domain"
 	"toritorkari-bazar/internal/models"
 	"toritorkari-bazar/types"
+
+	"gorm.io/gorm"
 )
 
 type SubCategoryService struct {
@@ -32,4 +34,20 @@ func (service SubCategoryService) CreateSubCategories(reqSubCategory []types.Sub
 	}
 
 	return nil
+}
+
+func (service SubCategoryService) GetSubCategory(subCategoryId uint) (types.SubCategoryRequest, error) {
+	subCategory, err := service.repo.GetSubCategory(subCategoryId)
+
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return types.SubCategoryRequest{}, errors.New("sub category not found")
+		}
+	}
+
+	return types.SubCategoryRequest{
+		ID:         subCategory.ID,
+		Name:       subCategory.Name,
+		CategoryId: subCategory.CategoryId,
+	}, nil
 }

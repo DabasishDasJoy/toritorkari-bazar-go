@@ -33,6 +33,11 @@ func Serve(e *echo.Echo) {
 	controllers.SetSubCategoryService(subCategoryService)
 	routes.SubCategoryRoutes(e)
 
+	productRepo := repositories.ProductDBInstance(db)
+	productService := service.ProductServiceInstance(productRepo)
+	controllers.ProductServiceInstance(productService)
+	routes.ProductRouts(e)
+
 	log.Fatal(e.Start(fmt.Sprintf(":%s", config.LocalConfig.Port)))
 
 }

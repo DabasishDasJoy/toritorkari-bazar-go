@@ -24,3 +24,15 @@ func (repo SubCategoryRepo) CreateSubCategories(subCategories []models.SubCatego
 
 	return nil
 }
+
+func (repo SubCategoryRepo) GetSubCategory(subCategoryId uint) (models.SubCategory, error) {
+	var SubCategory models.SubCategory
+
+	err := repo.db.Where("id=?", subCategoryId).First(&SubCategory).Error
+
+	if err != nil {
+		return models.SubCategory{}, err
+	}
+
+	return SubCategory, nil
+}
