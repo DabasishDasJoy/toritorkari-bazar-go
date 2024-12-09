@@ -1,9 +1,9 @@
-package connection
+package conn
 
 import (
 	"fmt"
-	"toritorkari-bazar/pkg/config"
-	"toritorkari-bazar/pkg/models"
+	"toritorkari-bazar/config"
+	"toritorkari-bazar/internal/models"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"

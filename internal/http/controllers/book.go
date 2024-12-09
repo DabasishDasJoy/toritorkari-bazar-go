@@ -3,9 +3,9 @@ package controllers
 import (
 	"net/http"
 	"strconv"
-	"toritorkari-bazar/pkg/domain"
-	"toritorkari-bazar/pkg/models"
-	"toritorkari-bazar/pkg/types"
+	"toritorkari-bazar/internal/domain"
+	"toritorkari-bazar/internal/models"
+	"toritorkari-bazar/types"
 
 	"github.com/labstack/echo/v4"
 )
@@ -27,7 +27,7 @@ func CreateBook(e echo.Context) error {
 		return e.JSON(http.StatusBadRequest, err.Error())
 	}
 
-	book := &models.Book{
+	book := models.Book{
 		BookName:    reqBook.BookName,
 		Author:      reqBook.Author,
 		Publication: reqBook.Publication,

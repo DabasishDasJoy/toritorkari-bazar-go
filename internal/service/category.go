@@ -2,9 +2,10 @@ package service
 
 import (
 	"errors"
-	"toritorkari-bazar/pkg/domain"
-	"toritorkari-bazar/pkg/models"
-	"toritorkari-bazar/pkg/types"
+
+	"toritorkari-bazar/internal/domain"
+	"toritorkari-bazar/internal/models"
+	"toritorkari-bazar/types"
 )
 
 type CategoryService struct {
@@ -17,7 +18,15 @@ func CategoryServiceInstance(categoryRepo domain.ICategoryRepo) domain.ICategory
 	}
 }
 
-func (service *CategoryService) CreateCategories(categories []*models.Category) error {
+func (service CategoryService) CreateCategories(reqCategories []types.CategoryRequest) error {
+	categories := make([]models.Category, 0, len(reqCategories))
+	for _, category := range reqCategories {
+		categories = append(categories, models.Category{
+			Name: category.Name,
+			Icon: category.Icon,
+		})
+	}
+
 	if err := service.repo.CreateCategories(categories); err != nil {
 		return errors.New("categories not created")
 	}
@@ -25,10 +34,10 @@ func (service *CategoryService) CreateCategories(categories []*models.Category) 
 	return nil
 }
 
-func (service *CategoryService) GetCategories() ([]types.CategoryRequest, error) {
+func (service CategoryService) GetCategories(categoryId uint) ([]types.CategoryRequest, error) {
 	var Categories []types.CategoryRequest
 
-	categories := service.repo.GetCategories()
+	categories := service.repo.GetCategories(categoryId)
 
 	if len(categories) == 0 {
 		return nil, errors.New("no categories found")

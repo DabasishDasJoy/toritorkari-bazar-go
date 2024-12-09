@@ -3,9 +3,10 @@ package controllers
 import (
 	"log"
 	"net/http"
-	"toritorkari-bazar/pkg/domain"
-	"toritorkari-bazar/pkg/models"
-	"toritorkari-bazar/pkg/types"
+	"strconv"
+
+	"toritorkari-bazar/internal/domain"
+	"toritorkari-bazar/types"
 
 	"github.com/labstack/echo/v4"
 )
@@ -17,7 +18,14 @@ func SetCategoryService(categoryService domain.ICategoryService) {
 }
 
 func GetCategories(e echo.Context) error {
-	categories, err := CategoryService.GetCategories()
+	tempCategoryId := e.QueryParam("categoryId")
+	categoryId, err := strconv.ParseInt(tempCategoryId, 0, 0)
+
+	if err != nil && tempCategoryId != "" {
+		return e.JSON(http.StatusBadRequest, "Invalid category ID")
+	}
+
+	categories, err := CategoryService.GetCategories(uint(categoryId))
 
 	if err != nil {
 		return e.JSON(http.StatusInternalServerError, err.Error())
@@ -27,9 +35,9 @@ func GetCategories(e echo.Context) error {
 }
 
 func CreateCategories(e echo.Context) error {
-	reqCategories := &[]types.CategoryRequest{}
+	reqCategories := []types.CategoryRequest{}
 
-	if err := e.Bind(reqCategories); err != nil {
+	if err := e.Bind(&reqCategories); err != nil {
 		log.Printf("Bind error: %v", err)
 		return e.JSON(http.StatusBadRequest, map[string]string{
 			"message": "Invalid Data Biding",
@@ -38,7 +46,7 @@ func CreateCategories(e echo.Context) error {
 
 	validationErrors := map[int]string{}
 
-	for i, category := range *reqCategories {
+	for i, category := range reqCategories {
 		if err := category.ValidateCategory(); err != nil {
 			validationErrors[i] = err.Error()
 		}
@@ -51,15 +59,7 @@ func CreateCategories(e echo.Context) error {
 		})
 	}
 
-	categories := make([]*models.Category, 0, len(*reqCategories))
-	for _, category := range *reqCategories {
-		categories = append(categories, &models.Category{
-			Name: category.Name,
-			Icon: category.Icon,
-		})
-	}
-
-	if err := CategoryService.CreateCategories(categories); err != nil {
+	if err := CategoryService.CreateCategories(reqCategories); err != nil {
 		return e.JSON(http.StatusInternalServerError, err.Error())
 	}
 

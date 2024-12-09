@@ -1,8 +1,8 @@
 package repositories
 
 import (
-	"toritorkari-bazar/pkg/domain"
-	"toritorkari-bazar/pkg/models"
+	"toritorkari-bazar/internal/domain"
+	"toritorkari-bazar/internal/models"
 
 	"gorm.io/gorm"
 )
@@ -17,7 +17,7 @@ func SubCategoryDBInstance(db *gorm.DB) domain.ISubCategoryRepo {
 	}
 }
 
-func (repo *SubCategoryRepo) CreateSubCategories(subCategories []*models.SubCategory) error {
+func (repo SubCategoryRepo) CreateSubCategories(subCategories []models.SubCategory) error {
 	if err := repo.db.Create(subCategories).Error; err != nil {
 		return err
 	}

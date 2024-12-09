@@ -1,8 +1,8 @@
 package repositories
 
 import (
-	"toritorkari-bazar/pkg/domain"
-	"toritorkari-bazar/pkg/models"
+	"toritorkari-bazar/internal/domain"
+	"toritorkari-bazar/internal/models"
 
 	"gorm.io/gorm"
 )
@@ -17,7 +17,7 @@ func CategoryDBInstance(db *gorm.DB) domain.ICategoryRepo {
 	}
 }
 
-func (repo *CategoryRepo) CreateCategories(categories []*models.Category) error {
+func (repo CategoryRepo) CreateCategories(categories []models.Category) error {
 	if err := repo.db.Create(categories).Error; err != nil {
 		return err
 	}
@@ -25,10 +25,15 @@ func (repo *CategoryRepo) CreateCategories(categories []*models.Category) error 
 	return nil
 }
 
-func (repo *CategoryRepo) GetCategories() []models.Category {
+func (repo CategoryRepo) GetCategories(categoryId uint) []models.Category {
 	var Categories []models.Category
+	var err error
 
-	err := repo.db.Find(&Categories).Error
+	if categoryId != 0 {
+		err = repo.db.Where("id = ?", categoryId).Find(&Categories).Error
+	} else {
+		err = repo.db.Find(&Categories).Error
+	}
 
 	if err != nil {
 		return []models.Category{}

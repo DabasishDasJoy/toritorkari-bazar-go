@@ -1,8 +1,8 @@
 package repositories
 
 import (
-	"toritorkari-bazar/pkg/domain"
-	"toritorkari-bazar/pkg/models"
+	"toritorkari-bazar/internal/domain"
+	"toritorkari-bazar/internal/models"
 
 	"gorm.io/gorm"
 )
@@ -33,7 +33,7 @@ func (repo *bookRepo) GetBooks(bookID uint) []models.Book {
 
 	return Book
 }
-func (repo *bookRepo) CreateBook(book *models.Book) error {
+func (repo *bookRepo) CreateBook(book models.Book) error {
 	if err := repo.db.Create(book).Error; err != nil {
 		return err
 	}

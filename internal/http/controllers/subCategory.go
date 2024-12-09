@@ -3,9 +3,10 @@ package controllers
 import (
 	"log"
 	"net/http"
-	"toritorkari-bazar/pkg/domain"
-	"toritorkari-bazar/pkg/models"
-	"toritorkari-bazar/pkg/types"
+	"strconv"
+
+	"toritorkari-bazar/internal/domain"
+	"toritorkari-bazar/types"
 
 	"github.com/labstack/echo/v4"
 )
@@ -17,9 +18,9 @@ func SetSubCategoryService(subCategoryService domain.ISubCategoryService) {
 }
 
 func CreateSubCategories(e echo.Context) error {
-	reqSubCategory := &[]types.SubCategoryRequest{}
+	reqSubCategory := []types.SubCategoryRequest{}
 
-	if err := e.Bind(reqSubCategory); err != nil {
+	if err := e.Bind(&reqSubCategory); err != nil {
 		log.Printf("Bind Error: %v", err)
 
 		return e.JSON(http.StatusBadRequest, map[string]string{
@@ -29,9 +30,16 @@ func CreateSubCategories(e echo.Context) error {
 
 	validationErrors := map[int]string{}
 
-	for i, subCategory := range *reqSubCategory {
+	for i, subCategory := range reqSubCategory {
 		if err := subCategory.ValidateSubCategory(); err != nil {
 			validationErrors[i] = err.Error()
+		}
+
+		if categories, err := CategoryService.GetCategories(subCategory.CategoryId); err != nil {
+			log.Printf("Get Categories Error: %v", err)
+			validationErrors[i] = "invalid category id " + strconv.Itoa(int(subCategory.CategoryId))
+		} else {
+			log.Print(categories)
 		}
 	}
 
@@ -42,16 +50,7 @@ func CreateSubCategories(e echo.Context) error {
 		})
 	}
 
-	subCategories := make([]*models.SubCategory, 0, len(*reqSubCategory))
-
-	for _, subCategory := range *reqSubCategory {
-		subCategories = append(subCategories, &models.SubCategory{
-			Name:       subCategory.Name,
-			CategoryId: subCategory.CategoryId,
-		})
-	}
-
-	if err := SubCategoryService.CreateSubCategories(subCategories); err != nil {
+	if err := SubCategoryService.CreateSubCategories(reqSubCategory); err != nil {
 		return e.JSON(http.StatusInternalServerError, err.Error())
 	}
 

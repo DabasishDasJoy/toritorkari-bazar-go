@@ -1,14 +1,14 @@
-package containers
+package cmd
 
 import (
 	"fmt"
 	"log"
-	"toritorkari-bazar/pkg/config"
-	"toritorkari-bazar/pkg/connection"
-	"toritorkari-bazar/pkg/controllers"
-	"toritorkari-bazar/pkg/repositories"
-	"toritorkari-bazar/pkg/routes"
-	"toritorkari-bazar/pkg/service"
+	connection "toritorkari-bazar/client/conn"
+	"toritorkari-bazar/config"
+	"toritorkari-bazar/internal/http/controllers"
+	"toritorkari-bazar/internal/http/routes"
+	"toritorkari-bazar/internal/repositories"
+	"toritorkari-bazar/internal/service"
 
 	"github.com/labstack/echo/v4"
 )

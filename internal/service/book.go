@@ -2,9 +2,10 @@ package service
 
 import (
 	"errors"
-	"toritorkari-bazar/pkg/domain"
-	"toritorkari-bazar/pkg/models"
-	"toritorkari-bazar/pkg/types"
+
+	"toritorkari-bazar/internal/domain"
+	"toritorkari-bazar/internal/models"
+	"toritorkari-bazar/types"
 )
 
 type BookService struct {
@@ -37,7 +38,7 @@ func (service *BookService) GetBooks(bookID uint) ([]types.BookRequest, error) {
 
 	return allBooks, nil
 }
-func (service *BookService) CreateBook(book *models.Book) error {
+func (service *BookService) CreateBook(book models.Book) error {
 	if err := service.repo.CreateBook(book); err != nil {
 		return errors.New("book was no created")
 	}

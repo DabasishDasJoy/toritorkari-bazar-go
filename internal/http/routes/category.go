@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"toritorkari-bazar/pkg/controllers"
+	"toritorkari-bazar/internal/http/controllers"
 
 	"github.com/labstack/echo/v4"
 )
