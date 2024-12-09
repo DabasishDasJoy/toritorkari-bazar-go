@@ -56,6 +56,3 @@ func GetBooks(e echo.Context) error {
 
 	return e.JSON(http.StatusOK, book)
 }
-
-// func UpdateBook(e echo.Context) error
-// func DeleteBook(e echo.Context) error
