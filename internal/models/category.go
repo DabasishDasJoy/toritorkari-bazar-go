@@ -5,3 +5,9 @@ type Category struct {
 	Name string `gorm:"unique"`
 	Icon string
 }
+
+type IntermediateCategoryResponse struct {
+	Category
+	SubCategoryID   uint
+	SubCategoryName string
+}

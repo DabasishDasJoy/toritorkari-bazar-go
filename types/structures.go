@@ -17,6 +17,13 @@ type CategoryRequest struct {
 	Icon string `json:"icon"`
 }
 
+type CategoryResponse struct {
+	ID            uint                 `json:"id"`
+	Name          string               `json:"name"`
+	Icon          string               `json:"icon"`
+	SubCategories []SubCategoryRequest `json:"subcategories"`
+}
+
 type SubCategoryRequest struct {
 	ID         uint   `json:"id"`
 	Name       string `json:"name"`
@@ -86,7 +93,7 @@ func (product ProductRequest) ValidateProduct() error {
 		validation.Field(&product.Quantity,
 			validation.Required.Error("Quantity cannot be empty")),
 		validation.Field(&product.Discount,
-			validation.Required.Error("Discount cannot be empty")),
+			validation.Min(0).Error("Discount cannot be empty")),
 		validation.Field(&product.Status,
 			validation.Required.Error("Status cannot be empty"),
 			validation.In("in-stock", "stock-out").Error("Status must be either 'in-stock' or 'stock-out'")))

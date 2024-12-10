@@ -65,3 +65,22 @@ func CreateProducts(e echo.Context) error {
 		"message": "products created successfully",
 	})
 }
+
+func GetProducts(e echo.Context) error {
+	temporaryCategoryId := e.QueryParam("categoryId")
+	categoryId, err := strconv.ParseUint(temporaryCategoryId, 0, 0)
+
+	if err != nil {
+		e.JSON(http.StatusBadRequest,
+			"invalid category id",
+		)
+	}
+
+	products, err := ProductService.GetProducts(uint(categoryId))
+
+	if err != nil {
+		e.JSON(http.StatusInternalServerError, err.Error())
+	}
+
+	return e.JSON(http.StatusFound, products)
+}

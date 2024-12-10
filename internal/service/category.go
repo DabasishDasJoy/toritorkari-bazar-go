@@ -34,8 +34,9 @@ func (service CategoryService) CreateCategories(reqCategories []types.CategoryRe
 	return nil
 }
 
-func (service CategoryService) GetCategories(categoryId uint) ([]types.CategoryRequest, error) {
-	var Categories []types.CategoryRequest
+func (service CategoryService) GetCategories(categoryId uint) ([]types.CategoryResponse, error) {
+	var Categories []types.CategoryResponse
+	categoryMap := make(map[uint]uint)
 
 	categories := service.repo.GetCategories(categoryId)
 
@@ -44,11 +45,33 @@ func (service CategoryService) GetCategories(categoryId uint) ([]types.CategoryR
 	}
 
 	for _, val := range categories {
-		Categories = append(Categories, types.CategoryRequest{
-			ID:   val.ID,
-			Name: val.Name,
-			Icon: val.Icon,
-		})
+		// Check if category already exists in the map
+		if index, exists := categoryMap[val.ID]; exists {
+
+			Categories[index].SubCategories = append(Categories[index].SubCategories, types.SubCategoryRequest{
+				ID:         val.SubCategoryID,
+				Name:       val.SubCategoryName,
+				CategoryId: val.ID,
+			})
+		} else {
+			newCategory := types.CategoryResponse{
+				ID:            val.ID,
+				Name:          val.Name,
+				Icon:          val.Icon,
+				SubCategories: make([]types.SubCategoryRequest, 0),
+			}
+
+			if val.SubCategoryID != 0 {
+				newCategory.SubCategories = append(newCategory.SubCategories, types.SubCategoryRequest{
+					ID:         val.SubCategoryID,
+					Name:       val.SubCategoryName,
+					CategoryId: val.ID,
+				})
+			}
+
+			Categories = append(Categories, newCategory)
+			categoryMap[val.ID] = uint(len(Categories) - 1)
+		}
 	}
 
 	return Categories, nil
