@@ -7,10 +7,10 @@ import (
 
 type IProductRepo interface {
 	CreateProducts(product []models.Product) error
-	GetProducts(categoryId uint) []models.Product
+	GetProducts(types.GetCategoriesParams) []models.Product
 }
 
 type IProductService interface {
 	CreateProducts(products []types.ProductRequest) error
-	GetProducts(categoryId uint) ([]types.ProductRequest, error)
+	GetProducts(types.GetCategoriesParams) ([]types.ProductRequest, error)
 }

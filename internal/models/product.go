@@ -9,6 +9,6 @@ type Product struct {
 	Icon          string  `gorm:"not null"`
 	Price         float64 `gorm:"not null"`
 	Quantity      string  `gorm:"not null"`
-	Discount      uint16  `gorm:"not null"`
+	Discount      int     `gorm:"not null"`
 	Status        string  `gorm:"not null"`
 }

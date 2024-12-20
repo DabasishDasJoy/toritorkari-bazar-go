@@ -39,8 +39,17 @@ type ProductRequest struct {
 	Icon          string  `json:"icon"`
 	Price         float64 `json:"price"`
 	Quantity      string  `json:"quantity"`
-	Discount      uint16  `json:"discount"`
+	Discount      int     `json:"discount"`
 	Status        string  `json:"status"`
+}
+
+type GetCategoriesParams struct {
+	CategoryID           uint
+	SubCategoryID        uint
+	TemporarySearchQuery string
+	TemporarySortQuery   string
+	Page                 uint
+	Size                 uint
 }
 
 func (book BookRequest) Validate() error {
@@ -93,7 +102,7 @@ func (product ProductRequest) ValidateProduct() error {
 		validation.Field(&product.Quantity,
 			validation.Required.Error("Quantity cannot be empty")),
 		validation.Field(&product.Discount,
-			validation.Min(0).Error("Discount cannot be empty")),
+			validation.Min(0).Error("Discount cannot be empty or negative")),
 		validation.Field(&product.Status,
 			validation.Required.Error("Status cannot be empty"),
 			validation.In("in-stock", "stock-out").Error("Status must be either 'in-stock' or 'stock-out'")))

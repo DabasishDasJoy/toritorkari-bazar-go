@@ -45,7 +45,6 @@ func (service CategoryService) GetCategories(categoryId uint) ([]types.CategoryR
 	}
 
 	for _, val := range categories {
-		// Check if category already exists in the map
 		if index, exists := categoryMap[val.ID]; exists {
 
 			Categories[index].SubCategories = append(Categories[index].SubCategories, types.SubCategoryRequest{

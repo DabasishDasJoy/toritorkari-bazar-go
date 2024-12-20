@@ -68,18 +68,49 @@ func CreateProducts(e echo.Context) error {
 
 func GetProducts(e echo.Context) error {
 	temporaryCategoryId := e.QueryParam("categoryId")
-	categoryId, err := strconv.ParseUint(temporaryCategoryId, 0, 0)
+	temporarySubCategoryId := e.QueryParam("subCategoryId")
+	temporarySearchQuery := e.QueryParam("search")
+	temporarySortQuery := e.QueryParam("sort")
+	temporaryPage := e.QueryParam("page")
+	temporarySize := e.QueryParam("size")
 
-	if err != nil {
-		e.JSON(http.StatusBadRequest,
+	categoryId, err := strconv.ParseUint(temporaryCategoryId, 0, 0)
+	if err != nil && temporaryCategoryId != "" {
+		return e.JSON(http.StatusBadRequest,
 			"invalid category id",
 		)
 	}
 
-	products, err := ProductService.GetProducts(uint(categoryId))
+	subCategoryId, err := strconv.ParseUint(temporarySubCategoryId, 0, 0)
+	if err != nil && temporarySubCategoryId != "" {
+		return e.JSON(http.StatusBadRequest,
+			"invalid sub category id",
+		)
+	}
+
+	page, err := strconv.ParseUint(temporaryPage, 10, 32)
+	if err != nil || temporaryPage == "" {
+		page = 0
+	}
+
+	size, err := strconv.ParseUint(temporarySize, 10, 32)
+	if err != nil || temporarySize == "" {
+		size = 10
+	}
+
+	getProductsParam := types.GetCategoriesParams{
+		CategoryID:           uint(categoryId),
+		SubCategoryID:        uint(subCategoryId),
+		TemporarySearchQuery: temporarySearchQuery,
+		TemporarySortQuery:   temporarySortQuery,
+		Page:                 uint(page) - 1,
+		Size:                 uint(size),
+	}
+
+	products, err := ProductService.GetProducts(getProductsParam)
 
 	if err != nil {
-		e.JSON(http.StatusInternalServerError, err.Error())
+		return e.JSON(http.StatusInternalServerError, err.Error())
 	}
 
 	return e.JSON(http.StatusFound, products)

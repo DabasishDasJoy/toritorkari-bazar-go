@@ -41,8 +41,8 @@ func (service ProductService) CreateProducts(reqProducts []types.ProductRequest)
 	return nil
 }
 
-func (service ProductService) GetProducts(categoryId uint) ([]types.ProductRequest, error) {
-	productsResponse := service.repo.GetProducts(categoryId)
+func (service ProductService) GetProducts(getCategoriesParams types.GetCategoriesParams) ([]types.ProductRequest, error) {
+	productsResponse := service.repo.GetProducts(getCategoriesParams)
 
 	if len(productsResponse) == 0 {
 		return nil, errors.New("no products found")
