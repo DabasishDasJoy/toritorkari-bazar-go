@@ -13,6 +13,7 @@ type Config struct {
 	DBIp   string `mapstructure:"DBIP"`
 	DBName string `mapstructure:"DBNAME"`
 	Port   string `mapstructure:"PORT"`
+	JWTKEY string `mapstructure:"JWTKEY"`
 }
 
 func InitConfig() *Config {

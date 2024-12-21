@@ -38,6 +38,11 @@ func Serve(e *echo.Echo) {
 	controllers.ProductServiceInstance(productService)
 	routes.ProductRouts(e)
 
+	userRepo := repositories.UserDBInstance(db)
+	userService := service.UserServiceInstance(userRepo)
+	controllers.SetUserServiceInstance(userService)
+	routes.UserRoutes(e)
+
 	log.Fatal(e.Start(fmt.Sprintf(":%s", config.LocalConfig.Port)))
 
 }

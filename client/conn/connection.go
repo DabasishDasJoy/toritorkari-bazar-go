@@ -34,6 +34,7 @@ func migrate() {
 	db.Migrator().AutoMigrate(&models.Category{})
 	db.Migrator().AutoMigrate(&models.SubCategory{})
 	db.Migrator().AutoMigrate(&models.Product{})
+	db.Migrator().AutoMigrate(&models.User{})
 }
 
 func GetDB() *gorm.DB {

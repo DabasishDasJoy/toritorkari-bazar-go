@@ -12,6 +12,8 @@ import (
 
 var ProductService domain.IProductService
 
+// Work here
+
 func ProductServiceInstance(productService domain.IProductService) {
 	ProductService = productService
 }
@@ -90,7 +92,7 @@ func GetProducts(e echo.Context) error {
 
 	page, err := strconv.ParseUint(temporaryPage, 10, 32)
 	if err != nil || temporaryPage == "" {
-		page = 0
+		page = 1
 	}
 
 	size, err := strconv.ParseUint(temporarySize, 10, 32)
