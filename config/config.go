@@ -2,7 +2,6 @@ package config
 
 import (
 	"log"
-	"os"
 
 	"github.com/spf13/viper"
 )
@@ -23,14 +22,7 @@ func InitConfig() *Config {
 	// viper.SetConfigName("app")
 	// viper.AutomaticEnv()
 
-	if os.Getenv("VERCEL") == "" { // Only load .env locally
-		viper.SetConfigFile(".env")
-		if err := viper.ReadInConfig(); err != nil {
-			log.Printf("Error reading .env file: %v", err)
-		}
-	}
-
-	// viper.SetConfigFile(".env") // Specify the .env file
+	viper.SetConfigFile(".env")
 	viper.AutomaticEnv()
 
 	if err := viper.ReadInConfig(); err != nil {
