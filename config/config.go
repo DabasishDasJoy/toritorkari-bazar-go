@@ -2,6 +2,7 @@ package config
 
 import (
 	"log"
+	"os"
 
 	"github.com/spf13/viper"
 )
@@ -18,8 +19,18 @@ type Config struct {
 }
 
 func InitConfig() *Config {
-	viper.AddConfigPath(".")
-	viper.SetConfigName("app")
+	// viper.AddConfigPath(".")
+	// viper.SetConfigName("app")
+	// viper.AutomaticEnv()
+
+	if os.Getenv("VERCEL") == "" { // Only load .env locally
+		viper.SetConfigFile(".env")
+		if err := viper.ReadInConfig(); err != nil {
+			log.Printf("Error reading .env file: %v", err)
+		}
+	}
+
+	// viper.SetConfigFile(".env") // Specify the .env file
 	viper.AutomaticEnv()
 
 	if err := viper.ReadInConfig(); err != nil {
