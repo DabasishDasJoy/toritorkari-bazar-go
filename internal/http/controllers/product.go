@@ -10,15 +10,19 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-var ProductService domain.IProductService
-
-// Work here
-
-func ProductServiceInstance(productService domain.IProductService) {
-	ProductService = productService
+type ProductController struct {
+	ProductService     domain.IProductService
+	SubCategoryService domain.ISubCategoryService
 }
 
-func CreateProducts(e echo.Context) error {
+func ProductServiceInstance(productService domain.IProductService, subCategoryService domain.ISubCategoryService) *ProductController {
+	return &ProductController{
+		ProductService:     productService,
+		SubCategoryService: subCategoryService,
+	}
+}
+
+func (controller *ProductController) CreateProducts(e echo.Context) error {
 	reqProducts := []types.ProductRequest{}
 
 	if err := e.Bind(&reqProducts); err != nil {
@@ -44,7 +48,7 @@ func CreateProducts(e echo.Context) error {
 			log.Print("valid category with id", strconv.Itoa(int(Category[0].ID)))
 		}
 
-		if SubCategory, err := SubCategoryService.GetSubCategory(product.SubCategoryId); err != nil {
+		if SubCategory, err := controller.SubCategoryService.GetSubCategory(product.SubCategoryId); err != nil {
 			log.Printf("Get Sub Categories Error: %v", err)
 			validationErrors[i] = "invalid subcategory id " + strconv.Itoa(int(product.SubCategoryId))
 		} else {
@@ -59,7 +63,7 @@ func CreateProducts(e echo.Context) error {
 		})
 	}
 
-	if err := ProductService.CreateProducts(reqProducts); err != nil {
+	if err := controller.ProductService.CreateProducts(reqProducts); err != nil {
 		return e.JSON(http.StatusInternalServerError, err.Error())
 	}
 
@@ -68,7 +72,7 @@ func CreateProducts(e echo.Context) error {
 	})
 }
 
-func GetProducts(e echo.Context) error {
+func (controller *ProductController) GetProducts(e echo.Context) error {
 	temporaryCategoryId := e.QueryParam("categoryId")
 	temporarySubCategoryId := e.QueryParam("subCategoryId")
 	temporarySearchQuery := e.QueryParam("search")
@@ -109,7 +113,7 @@ func GetProducts(e echo.Context) error {
 		Size:                 uint(size),
 	}
 
-	products, err := ProductService.GetProducts(getProductsParam)
+	products, err := controller.ProductService.GetProducts(getProductsParam)
 
 	if err != nil {
 		return e.JSON(http.StatusInternalServerError, err.Error())

@@ -11,13 +11,19 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-var SubCategoryService domain.ISubCategoryService
-
-func SetSubCategoryService(subCategoryService domain.ISubCategoryService) {
-	SubCategoryService = subCategoryService
+type SubCategoryController struct {
+	SubCategoryService domain.ISubCategoryService
+	CategoryService    domain.ICategoryService
 }
 
-func CreateSubCategories(e echo.Context) error {
+func SetSubCategoryService(subCategoryService domain.ISubCategoryService, categoryService domain.ICategoryService) *SubCategoryController {
+	return &SubCategoryController{
+		SubCategoryService: subCategoryService,
+		CategoryService:    categoryService,
+	}
+}
+
+func (controller *SubCategoryController) CreateSubCategories(e echo.Context) error {
 	reqSubCategory := []types.SubCategoryRequest{}
 
 	if err := e.Bind(&reqSubCategory); err != nil {
@@ -35,7 +41,7 @@ func CreateSubCategories(e echo.Context) error {
 			validationErrors[i] = err.Error()
 		}
 
-		if categories, err := CategoryService.GetCategories(subCategory.CategoryId); err != nil {
+		if categories, err := controller.CategoryService.GetCategories(subCategory.CategoryId); err != nil {
 			log.Printf("Get Categories Error: %v", err)
 			validationErrors[i] = "invalid category id " + strconv.Itoa(int(subCategory.CategoryId))
 		} else {
@@ -50,7 +56,7 @@ func CreateSubCategories(e echo.Context) error {
 		})
 	}
 
-	if err := SubCategoryService.CreateSubCategories(reqSubCategory); err != nil {
+	if err := controller.SubCategoryService.CreateSubCategories(reqSubCategory); err != nil {
 		return e.JSON(http.StatusInternalServerError, err.Error())
 	}
 

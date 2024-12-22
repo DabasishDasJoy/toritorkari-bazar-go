@@ -7,9 +7,9 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func ProductRouts(e *echo.Echo) {
+func ProductRouts(e *echo.Echo, productController *controllers.ProductController) {
 	Product := e.Group("product")
 	Product.Use(middleware.AuthenticateUser())
-	Product.POST("", controllers.CreateProducts)
-	Product.GET("/list", controllers.GetProducts)
+	Product.POST("", productController.CreateProducts)
+	Product.GET("/list", productController.GetProducts)
 }

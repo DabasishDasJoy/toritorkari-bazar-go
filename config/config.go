@@ -14,15 +14,17 @@ type Config struct {
 	DBName string `mapstructure:"DBNAME"`
 	Port   string `mapstructure:"PORT"`
 	JWTKEY string `mapstructure:"JWTKEY"`
+	CERT   string `mapstructure:"CERT"`
 }
 
 func InitConfig() *Config {
+	viper.AutomaticEnv()
 	viper.AddConfigPath(".")
 	viper.SetConfigName("app")
 	viper.AutomaticEnv()
 
 	if err := viper.ReadInConfig(); err != nil {
-		log.Fatal("Error reading env file", err)
+		log.Println("No config file found, relying on environment variables")
 	}
 
 	var config *Config

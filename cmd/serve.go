@@ -30,13 +30,13 @@ func Serve(e *echo.Echo) {
 
 	subCategoryRepo := repositories.SubCategoryDBInstance(db)
 	subCategoryService := service.SubCategoryServiceInstance(subCategoryRepo)
-	controllers.SetSubCategoryService(subCategoryService)
-	routes.SubCategoryRoutes(e)
+	subCategoryController := controllers.SetSubCategoryService(subCategoryService, categoryService)
+	routes.SubCategoryRoutes(e, subCategoryController)
 
 	productRepo := repositories.ProductDBInstance(db)
 	productService := service.ProductServiceInstance(productRepo)
-	controllers.ProductServiceInstance(productService)
-	routes.ProductRouts(e)
+	productController := controllers.ProductServiceInstance(productService, subCategoryService)
+	routes.ProductRouts(e, productController)
 
 	userRepo := repositories.UserDBInstance(db)
 	userService := service.UserServiceInstance(userRepo)
