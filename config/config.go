@@ -18,13 +18,12 @@ type Config struct {
 }
 
 func InitConfig() *Config {
-	viper.AutomaticEnv()
 	viper.AddConfigPath(".")
 	viper.SetConfigName("app")
 	viper.AutomaticEnv()
 
 	if err := viper.ReadInConfig(); err != nil {
-		log.Println("No config file found, relying on environment variables")
+		log.Fatal("Error reading env file", err)
 	}
 
 	var config *Config
