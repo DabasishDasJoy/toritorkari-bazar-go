@@ -1,18 +1,13 @@
 package conn
 
 import (
-	"crypto/tls"
-	"crypto/x509"
 	"fmt"
-	"log"
 	"toritorkari-bazar/config"
 	"toritorkari-bazar/internal/models"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
-
-	sq "github.com/go-sql-driver/mysql"
 )
 
 var db *gorm.DB
@@ -20,19 +15,19 @@ var db *gorm.DB
 func connect() {
 	dbConfig := config.LocalConfig
 
-	certPool := x509.NewCertPool()
-	if !certPool.AppendCertsFromPEM([]byte(dbConfig.CERT)) {
-		log.Fatalf("Failed to append CA certificate")
-	}
+	// certPool := x509.NewCertPool()
+	// if !certPool.AppendCertsFromPEM([]byte(dbConfig.CERT)) {
+	// 	log.Fatalf("Failed to append CA certificate")
+	// }
 
-	tlsConfig := &tls.Config{
-		RootCAs: certPool,
-	}
+	// tlsConfig := &tls.Config{
+	// 	RootCAs: certPool,
+	// }
 
-	err := sq.RegisterTLSConfig("custom", tlsConfig)
-	if err != nil {
-		log.Fatalf("Failed to register custom TLS config: %v", err)
-	}
+	// err := sq.RegisterTLSConfig("custom", tlsConfig)
+	// if err != nil {
+	// 	log.Fatalf("Failed to register custom TLS config: %v", err)
+	// }
 
 	dsn := fmt.Sprintf("%s:%s@%s/%s?charset=utf8mb4&parseTime=True&loc=Local",
 		dbConfig.DBUser, dbConfig.DBPass, dbConfig.DBIp, dbConfig.DBName)
