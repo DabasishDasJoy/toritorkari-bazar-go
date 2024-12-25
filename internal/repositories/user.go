@@ -28,7 +28,7 @@ func (repo UserRepo) SignUp(user models.User) error {
 func (repo UserRepo) GetUserByEmail(email string) (user models.User, err error) {
 	var User models.User
 
-	query := `select email, password, role, name from users where email=?`
+	query := `select id, email, password, role, name from users where email=?`
 
 	err = repo.db.Raw(query, email).First(&User).Error
 

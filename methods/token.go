@@ -9,11 +9,12 @@ import (
 	"github.com/dgrijalva/jwt-go"
 )
 
-func GenerateToken(email string, expiration time.Duration) (string, error) {
+func GenerateToken(email string, expiration time.Duration, userId uint) (string, error) {
 	configs := config.LocalConfig
 	expirationTime := time.Now().Add(expiration)
 
 	claims := models.Claims{
+		UserID: userId,
 		StandardClaims: jwt.StandardClaims{
 			Subject:   email,
 			ExpiresAt: expirationTime.Unix(),

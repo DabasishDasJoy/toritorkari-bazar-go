@@ -23,7 +23,7 @@ func SetSubCategoryService(subCategoryService domain.ISubCategoryService, catego
 	}
 }
 
-func (controller *SubCategoryController) CreateSubCategories(e echo.Context) error {
+func (controller SubCategoryController) CreateSubCategories(e echo.Context) error {
 	reqSubCategory := []types.SubCategoryRequest{}
 
 	if err := e.Bind(&reqSubCategory); err != nil {

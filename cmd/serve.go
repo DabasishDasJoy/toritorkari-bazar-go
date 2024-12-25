@@ -43,6 +43,11 @@ func Serve(e *echo.Echo) {
 	controllers.SetUserServiceInstance(userService)
 	routes.UserRoutes(e)
 
+	reviewRepo := repositories.ReviewDBInstance(db)
+	reviewService := service.ReviewServiceInstance(reviewRepo)
+	reviewController := controllers.SetReviewController(reviewService, productService)
+	routes.ReviewRoutes(e, reviewController)
+
 	log.Fatal(e.Start(fmt.Sprintf(":%s", config.LocalConfig.Port)))
 
 }
