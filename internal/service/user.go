@@ -72,12 +72,12 @@ func (service UserService) Login(loginRequest types.LoginRequest) (types.LoginRe
 		return types.LoginResponse{}, errors.New("invalid password")
 	}
 
-	accessToken, err := methods.GenerateToken(user.Email, 5*time.Minute)
+	accessToken, err := methods.GenerateToken(user.Email, 5*time.Minute, user.ID)
 	if err != nil {
 		return types.LoginResponse{}, err
 	}
 
-	refreshToken, err := methods.GenerateToken(user.Email, 24*time.Hour)
+	refreshToken, err := methods.GenerateToken(user.Email, 24*time.Hour, user.ID)
 	if err != nil {
 		return types.LoginResponse{}, err
 	}
@@ -89,6 +89,11 @@ func (service UserService) Login(loginRequest types.LoginRequest) (types.LoginRe
 }
 
 func (service UserService) RefreshToken(loginRequest types.LoginRequest) (types.LoginResponse, error) {
+	user, userErr := service.GetUserByEmail(loginRequest.Email)
+	if userErr != nil {
+		return types.LoginResponse{}, userErr
+	}
+
 	var (
 		claims models.Claims
 		err    error
@@ -98,7 +103,7 @@ func (service UserService) RefreshToken(loginRequest types.LoginRequest) (types.
 		return types.LoginResponse{}, err
 	}
 
-	accessToken, err := methods.GenerateToken(claims.Subject, 5*time.Minute)
+	accessToken, err := methods.GenerateToken(claims.Subject, 5*time.Minute, user.ID)
 
 	if err != nil {
 		return types.LoginResponse{}, err

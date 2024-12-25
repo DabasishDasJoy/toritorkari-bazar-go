@@ -69,3 +69,15 @@ func (repo ProductRepo) GetProducts(getCategoriesParams types.GetCategoriesParam
 
 	return Products
 }
+
+func (repo ProductRepo) GetProduct(id uint) (models.Product, error) {
+	var product models.Product
+
+	query := `select id, name, description, category_id, sub_category_id, icon, price, quantity, discount, status from products where id =?`
+
+	if err := repo.db.Raw(query, id).First(&product).Error; err != nil {
+		return models.Product{}, err
+	}
+
+	return product, nil
+}

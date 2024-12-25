@@ -67,3 +67,24 @@ func (service ProductService) GetProducts(getCategoriesParams types.GetCategorie
 
 	return products, nil
 }
+
+func (service ProductService) GetProduct(id uint) (types.ProductRequest, error) {
+	productResponse, err := service.repo.GetProduct(id)
+
+	if err != nil {
+		return types.ProductRequest{}, err
+	}
+
+	return types.ProductRequest{
+		ID:            productResponse.ID,
+		Name:          productResponse.Name,
+		Description:   productResponse.Description,
+		Price:         productResponse.Price,
+		Quantity:      productResponse.Quantity,
+		SubCategoryId: productResponse.SubCategoryId,
+		CategoryId:    productResponse.CategoryId,
+		Icon:          productResponse.Icon,
+		Discount:      productResponse.Discount,
+		Status:        productResponse.Status,
+	}, nil
+}
