@@ -89,7 +89,7 @@ func (product ProductRequest) ValidateProduct() error {
 			validation.Required.Error("Product name cannot be empty"),
 			validation.Length(1, 50)),
 		validation.Field(&product.Description,
-			validation.Length(0, 255)),
+			validation.Required.Error("Product description cannot be empty"),
 		validation.Field(&product.CategoryId,
 			validation.Required.Error("CategoryId cannot be empty")),
 		validation.Field(&product.SubCategoryId,
