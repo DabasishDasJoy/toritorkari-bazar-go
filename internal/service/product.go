@@ -26,8 +26,8 @@ func (service ProductService) CreateProducts(reqProducts []types.ProductRequest)
 			Description:   product.Description,
 			Price:         product.Price,
 			Quantity:      product.Quantity,
-			SubCategoryId: product.SubCategoryId,
-			CategoryId:    product.CategoryId,
+			SubCategoryID: product.SubCategoryID,
+			CategoryID:    product.CategoryID,
 			Icon:          product.Icon,
 			Discount:      product.Discount,
 			Status:        product.Status,
@@ -41,11 +41,12 @@ func (service ProductService) CreateProducts(reqProducts []types.ProductRequest)
 	return nil
 }
 
-func (service ProductService) GetProducts(getCategoriesParams types.GetCategoriesParams) ([]types.ProductRequest, error) {
-	productsResponse := service.repo.GetProducts(getCategoriesParams)
+func (service ProductService) GetProducts(getCategoriesParams types.GetCategoriesParams) (types.ProductResponse, error) {
+	productsResponse, total, _ := service.repo.GetProducts(getCategoriesParams)
+	var productResponse = types.ProductResponse{}
 
 	if len(productsResponse) == 0 {
-		return nil, errors.New("no products found")
+		return productResponse, errors.New("no products found")
 	}
 
 	var products []types.ProductRequest
@@ -57,15 +58,18 @@ func (service ProductService) GetProducts(getCategoriesParams types.GetCategorie
 			Description:   product.Description,
 			Price:         product.Price,
 			Quantity:      product.Quantity,
-			SubCategoryId: product.SubCategoryId,
-			CategoryId:    product.CategoryId,
+			SubCategoryID: product.SubCategoryID,
+			CategoryID:    product.CategoryID,
 			Icon:          product.Icon,
 			Discount:      product.Discount,
 			Status:        product.Status,
 		})
 	}
 
-	return products, nil
+	return types.ProductResponse{
+		Products: products,
+		Count:    total,
+	}, nil
 }
 
 func (service ProductService) GetProduct(id uint) (types.ProductRequest, error) {
@@ -81,8 +85,8 @@ func (service ProductService) GetProduct(id uint) (types.ProductRequest, error) 
 		Description:   productResponse.Description,
 		Price:         productResponse.Price,
 		Quantity:      productResponse.Quantity,
-		SubCategoryId: productResponse.SubCategoryId,
-		CategoryId:    productResponse.CategoryId,
+		SubCategoryID: productResponse.SubCategoryID,
+		CategoryID:    productResponse.CategoryID,
 		Icon:          productResponse.Icon,
 		Discount:      productResponse.Discount,
 		Status:        productResponse.Status,
