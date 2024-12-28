@@ -41,16 +41,16 @@ func (controller *ProductController) CreateProducts(e echo.Context) error {
 			validationErrors[i] = err.Error()
 		}
 
-		if Category, err := CategoryService.GetCategories(product.CategoryId); err != nil {
+		if Category, err := CategoryService.GetCategories(product.CategoryID); err != nil {
 			log.Printf("Get Categories Error: %v", err)
-			validationErrors[i] = "invalid category id " + strconv.Itoa(int(product.CategoryId))
+			validationErrors[i] = "invalid category id " + strconv.Itoa(int(product.CategoryID))
 		} else {
 			log.Print("valid category with id", strconv.Itoa(int(Category[0].ID)))
 		}
 
-		if SubCategory, err := controller.SubCategoryService.GetSubCategory(product.SubCategoryId); err != nil {
+		if SubCategory, err := controller.SubCategoryService.GetSubCategory(product.SubCategoryID); err != nil {
 			log.Printf("Get Sub Categories Error: %v", err)
-			validationErrors[i] = "invalid subcategory id " + strconv.Itoa(int(product.SubCategoryId))
+			validationErrors[i] = "invalid subcategory id " + strconv.Itoa(int(product.SubCategoryID))
 		} else {
 			log.Print("valid sub category id " + strconv.Itoa(int(SubCategory.ID)))
 		}

@@ -27,47 +27,81 @@ func (repo ProductRepo) CreateProducts(products []models.Product) error {
 	return nil
 }
 
-func (repo ProductRepo) GetProducts(getCategoriesParams types.GetCategoriesParams) []models.Product {
-	var Products []models.Product
+func (repo ProductRepo) GetProducts(getCategoriesParams types.GetCategoriesParams) ([]models.Product, int, error) {
+	var products []models.Product
+	var totalCount int
 
-	query := `select products.id, products.name, products.description, products.category_id, products.sub_category_id, products.icon, products.price, products.quantity, products.discount, products.status from products`
+	// Start building the base query
+	var query strings.Builder
+	query.WriteString(`
+		SELECT 
+			products.id, 
+			products.name, 
+			products.description, 
+			products.category_id, 
+			products.sub_category_id, 
+			products.icon, 
+			products.price, 
+			products.quantity, 
+			products.discount, 
+			products.status
+		FROM products
+	`)
 
+	// Start building the count query
+	var countQuery strings.Builder
+	countQuery.WriteString(`
+		SELECT COUNT(*) 
+		FROM products
+	`)
+
+	// Store query parameters
 	var params []interface{}
 
-	if getCategoriesParams.CategoryID != 0 && getCategoriesParams.SubCategoryID == 0 {
-		query += " WHERE products.category_id =?"
+	// Apply filters
+	whereClauses := []string{}
+	if getCategoriesParams.CategoryID != 0 {
+		whereClauses = append(whereClauses, "products.category_id = ?")
 		params = append(params, getCategoriesParams.CategoryID)
-	} else if getCategoriesParams.CategoryID != 0 && getCategoriesParams.SubCategoryID != 0 {
-		query += " WHERE products.category_id =? AND products.sub_category_id =?"
-		params = append(params, getCategoriesParams.CategoryID, getCategoriesParams.SubCategoryID)
-	} else if getCategoriesParams.CategoryID == 0 && getCategoriesParams.SubCategoryID != 0 {
-		query += " WHERE products.sub_category_id =?"
+	}
+	if getCategoriesParams.SubCategoryID != 0 {
+		whereClauses = append(whereClauses, "products.sub_category_id = ?")
 		params = append(params, getCategoriesParams.SubCategoryID)
 	}
-
-	if getCategoriesParams.CategoryID != 0 || getCategoriesParams.SubCategoryID != 0 {
-		query += " AND products.name LIKE ?"
-	} else {
-		query += " WHERE products.name LIKE ?"
+	if getCategoriesParams.TemporarySearchQuery != "" {
+		whereClauses = append(whereClauses, "products.name LIKE ?")
+		params = append(params, "%"+getCategoriesParams.TemporarySearchQuery+"%")
 	}
 
-	params = append(params, "%"+getCategoriesParams.TemporarySearchQuery+"%")
+	// Append WHERE clause if there are any conditions
+	if len(whereClauses) > 0 {
+		whereCondition := " WHERE " + strings.Join(whereClauses, " AND ")
+		query.WriteString(whereCondition)
+		countQuery.WriteString(whereCondition)
+	}
 
+	// Apply sorting
+	sortOrder := "ASC"
 	if strings.ToLower(getCategoriesParams.TemporarySortQuery) == "desc" {
-		query += " order by price desc"
-	} else {
-		query += " order by price asc"
+		sortOrder = "DESC"
 	}
+	query.WriteString(" ORDER BY products.price " + sortOrder)
 
-	query += " limit ? offset ?"
-
+	// Apply pagination
+	query.WriteString(" LIMIT ? OFFSET ?")
 	params = append(params, getCategoriesParams.Size, getCategoriesParams.Page*getCategoriesParams.Size)
 
-	if err := repo.db.Raw(query, params...).Find(&Products).Error; err != nil {
-		return []models.Product{}
+	// Execute the count query to get the total count
+	if err := repo.db.Raw(countQuery.String(), params[:len(params)-2]...).Scan(&totalCount).Error; err != nil {
+		return nil, 0, err
 	}
 
-	return Products
+	// Execute the main query to get the paginated results
+	if err := repo.db.Raw(query.String(), params...).Find(&products).Error; err != nil {
+		return nil, 0, err
+	}
+
+	return products, totalCount, nil
 }
 
 func (repo ProductRepo) GetProduct(id uint) (models.Product, error) {

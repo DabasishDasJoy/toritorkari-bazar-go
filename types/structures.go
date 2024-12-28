@@ -34,13 +34,19 @@ type ProductRequest struct {
 	ID            uint    `json:"id"`
 	Name          string  `json:"name"`
 	Description   string  `json:"description,omitempty"`
-	CategoryId    uint    `json:"categoryId"`
-	SubCategoryId uint    `json:"subCategoryId"`
+	CategoryID    uint    `json:"categoryId"`
+	SubCategoryID uint    `json:"subCategoryId"`
 	Icon          string  `json:"icon"`
 	Price         float64 `json:"price"`
 	Quantity      string  `json:"quantity"`
 	Discount      int     `json:"discount"`
 	Status        string  `json:"status"`
+	TotalCount    int     `json:"totalCount"`
+}
+
+type ProductResponse struct {
+	Products []ProductRequest `json:"products"`
+	Count    int              `json:"count"`
 }
 
 type GetCategoriesParams struct {
@@ -90,9 +96,9 @@ func (product ProductRequest) ValidateProduct() error {
 			validation.Length(1, 50)),
 		validation.Field(&product.Description,
 			validation.Required.Error("Product description cannot be empty")),
-		validation.Field(&product.CategoryId,
+		validation.Field(&product.CategoryID,
 			validation.Required.Error("CategoryId cannot be empty")),
-		validation.Field(&product.SubCategoryId,
+		validation.Field(&product.SubCategoryID,
 			validation.Required.Error("SubCategoryId cannot be empty")),
 		validation.Field(&product.Icon,
 			validation.Required.Error("Icon cannot be empty")),
