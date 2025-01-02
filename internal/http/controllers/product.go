@@ -121,3 +121,21 @@ func (controller *ProductController) GetProducts(e echo.Context) error {
 
 	return e.JSON(http.StatusFound, products)
 }
+
+func (controller *ProductController) GetProduct(e echo.Context) error {
+	temporaryProductId := e.Param("productID")
+	ProductID, err := strconv.ParseInt(temporaryProductId, 0, 0)
+
+	if err != nil {
+		return e.JSON(http.StatusBadRequest, "invalid productID")
+	}
+
+	Product, err := controller.ProductService.GetProduct(uint(ProductID))
+
+	if err != nil {
+		return e.JSON(http.StatusInternalServerError, err.Error())
+	}
+
+	return e.JSON(http.StatusOK, Product)
+
+}

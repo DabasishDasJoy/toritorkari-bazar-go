@@ -41,9 +41,9 @@ func (service ProductService) CreateProducts(reqProducts []types.ProductRequest)
 	return nil
 }
 
-func (service ProductService) GetProducts(getCategoriesParams types.GetCategoriesParams) (types.ProductResponse, error) {
+func (service ProductService) GetProducts(getCategoriesParams types.GetCategoriesParams) (types.ProductListResponse, error) {
 	productsResponse, total, _ := service.repo.GetProducts(getCategoriesParams)
-	var productResponse = types.ProductResponse{}
+	var productResponse = types.ProductListResponse{}
 
 	if len(productsResponse) == 0 {
 		return productResponse, errors.New("no products found")
@@ -66,29 +66,36 @@ func (service ProductService) GetProducts(getCategoriesParams types.GetCategorie
 		})
 	}
 
-	return types.ProductResponse{
+	return types.ProductListResponse{
 		Products: products,
 		Count:    total,
 	}, nil
 }
 
-func (service ProductService) GetProduct(id uint) (types.ProductRequest, error) {
+func (service ProductService) GetProduct(id uint) (types.ProductResponse, error) {
 	productResponse, err := service.repo.GetProduct(id)
 
 	if err != nil {
-		return types.ProductRequest{}, err
+		return types.ProductResponse{}, err
 	}
 
-	return types.ProductRequest{
-		ID:            productResponse.ID,
-		Name:          productResponse.Name,
-		Description:   productResponse.Description,
-		Price:         productResponse.Price,
-		Quantity:      productResponse.Quantity,
-		SubCategoryID: productResponse.SubCategoryID,
-		CategoryID:    productResponse.CategoryID,
-		Icon:          productResponse.Icon,
-		Discount:      productResponse.Discount,
-		Status:        productResponse.Status,
+	return types.ProductResponse{
+		ID:          productResponse.ID,
+		Name:        productResponse.Name,
+		Description: productResponse.Description,
+		Price:       productResponse.Price,
+		Quantity:    productResponse.Quantity,
+		Icon:        productResponse.Icon,
+		Discount:    productResponse.Discount,
+		Status:      productResponse.Status,
+		Category: types.CategoryRequest{
+			ID:   productResponse.CategoryID,
+			Name: productResponse.CategoryName,
+			Icon: productResponse.CategoryIcon,
+		},
+		SubCategory: types.SubCategoryRequest{
+			ID:   productResponse.SubCategoryID,
+			Name: productResponse.SubCategoryName,
+		},
 	}, nil
 }
