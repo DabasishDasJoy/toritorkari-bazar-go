@@ -45,6 +45,19 @@ type ProductRequest struct {
 }
 
 type ProductResponse struct {
+	ID          uint    `json:"id"`
+	Name        string  `json:"name"`
+	Description string  `json:"description,omitempty"`
+	Icon        string  `json:"icon"`
+	Price       float64 `json:"price"`
+	Quantity    string  `json:"quantity"`
+	Discount    int     `json:"discount"`
+	Status      string  `json:"status"`
+	Category    CategoryRequest
+	SubCategory SubCategoryRequest
+}
+
+type ProductListResponse struct {
 	Products []ProductRequest `json:"products"`
 	Count    int              `json:"count"`
 }

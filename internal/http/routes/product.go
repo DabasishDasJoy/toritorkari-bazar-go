@@ -10,4 +10,5 @@ func ProductRouts(e *echo.Echo, productController *controllers.ProductController
 	Product := e.Group("product")
 	Product.POST("", productController.CreateProducts)
 	Product.GET("", productController.GetProducts)
+	Product.GET("/:productID", productController.GetProduct)
 }

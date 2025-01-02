@@ -104,13 +104,19 @@ func (repo ProductRepo) GetProducts(getCategoriesParams types.GetCategoriesParam
 	return products, totalCount, nil
 }
 
-func (repo ProductRepo) GetProduct(id uint) (models.Product, error) {
-	var product models.Product
+func (repo ProductRepo) GetProduct(id uint) (models.ProductResponse, error) {
+	var product models.ProductResponse
 
-	query := `select id, name, description, category_id, sub_category_id, icon, price, quantity, discount, status from products where id =?`
+	query := `select products.id, products.name, products.description, products.icon, products.price, products.quantity, products.discount, products.status, 
+				categories.name as category_name, categories.icon as category_icon, categories.id as category_id,
+				sub_categories.name as sub_category_name, sub_categories.id as sub_category_id
+				from products inner join categories on products.category_id=categories.id 
+				inner join sub_categories on products.sub_category_id=sub_categories.id
+				where products.id=?
+`
 
 	if err := repo.db.Raw(query, id).First(&product).Error; err != nil {
-		return models.Product{}, err
+		return models.ProductResponse{}, err
 	}
 
 	return product, nil
