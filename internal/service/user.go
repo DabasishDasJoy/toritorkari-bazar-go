@@ -72,7 +72,7 @@ func (service UserService) Login(loginRequest types.LoginRequest) (types.LoginRe
 		return types.LoginResponse{}, errors.New("invalid password")
 	}
 
-	accessToken, err := methods.GenerateToken(user.Email, 5*time.Minute, user.ID)
+	accessToken, err := methods.GenerateToken(user.Email, 30*time.Minute, user.ID)
 	if err != nil {
 		return types.LoginResponse{}, err
 	}

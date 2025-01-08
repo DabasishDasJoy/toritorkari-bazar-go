@@ -42,6 +42,7 @@ func (ReviewService ReviewService) CreateReview(review types.ReviewRequest) (typ
 		Review:    newReview.Review,
 		ProductID: newReview.ProductID,
 		UserID:    newReview.UserID,
+		CreatedAt: newReview.CreatedAt,
 	}, nil
 }
 
