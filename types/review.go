@@ -8,11 +8,12 @@ import (
 )
 
 type ReviewRequest struct {
-	ID        uint    `json:"id"`
-	Rating    float64 `json:"rating"`
-	Review    string  `json:"review"`
-	ProductID uint    `json:"productID"`
-	UserID    uint    `json:"UserID"`
+	ID        uint      `json:"id"`
+	Rating    float64   `json:"rating"`
+	Review    string    `json:"review"`
+	ProductID uint      `json:"productID"`
+	UserID    uint      `json:"UserID"`
+	CreatedAt time.Time `json:"createdAt"`
 }
 
 type ReviewResponse struct {
